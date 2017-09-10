@@ -8,7 +8,8 @@ import time
 
 
 def get_latest_proxy():
-	url = 'http://140.114.88.186:8000/?types=0&country=国内'
+	url = 'your_ip_proxy_pool_address' 
+	#http://140.114.88.186:8000/?types=0&country=国内
 	r = requests.get(url)
 	ip_ports = json.loads(r.text)
 	return ip_ports
