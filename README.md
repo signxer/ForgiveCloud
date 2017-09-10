@@ -4,12 +4,14 @@
 ***
 自动寻找可用代理并写入配置，一键去除黄易云音乐地区限制。
 One key to remove the Netease CloudMusic area restrictions.
-***
-##Updates
+*** 
+
+## Updates
+
 V2.1
 2017年9月10日
 *修正了一个恶性Bug
-***
+
 V2.0
 2017年9月10日 
 *修正了一些Bug
