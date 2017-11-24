@@ -35,10 +35,10 @@ def check_ip(ip,port):
 	}
 	try:
 		try:
-			r = requests.get("http://ip.chinaz.com/getip.aspx", proxies=proxies)
+			r = requests.get("http://ip.chinaz.com/getip.aspx", proxies=proxies,timeout=5)
 			now_ip = re.search('\d+\.\d+\.\d+\.\d+',r.text).group(0)
 		except:
-			r = requests.get("http://checkip.dyndns.com/", proxies=proxies)
+			r = requests.get("http://checkip.dyndns.com/", proxies=proxies,timeout=5)
 			now_ip = re.search('\d+\.\d+\.\d+\.\d+',r.text).group(0)
 
 		if check_location_cn(now_ip):
