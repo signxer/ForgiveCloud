@@ -8,8 +8,7 @@ import time
 
 
 def get_latest_proxy():
-	url = 'your_ip_proxy_pool_address' 
-	#http://140.114.88.186:8000/?types=0&country=国内
+	url = 'https://proxy.horocn.com/api/free-proxy?format=json&loc_name=%E4%B8%AD%E5%9B%BD'
 	r = requests.get(url)
 	ip_ports = json.loads(r.text)
 	return ip_ports
@@ -90,8 +89,8 @@ def get_avalibale_ip():
 	i = 0
 	for each in ip_ports:
 		i += 1
-		ip = each[0]
-		port = each[1]
+		ip = each["host"]
+		port = each["port"]
 		print("Checking "+str(i)+" of "+str(len(ip_ports))+" proxies.Please Wait...")
 		if check_location_cn(ip) and check_ip(ip,port):
 			print("Find available proxy!")
@@ -112,8 +111,8 @@ if __name__ == '__main__':
 	print("     \______  /____/\____/|____/\____ | ")
 	print("            \/                       \/ ")
 	print("========================================")
-	print("          Forgive Cloud V2.1            ")
-	print("        Powered by Old8Bits.club        ")
+	print("          Forgive Cloud V2.2            ")
+	print("          Powered by o8b.club           ")
 	print("========================================")
 	print("STEP 1/2 Getting newest IP proxy pool...")
 	ip,port = get_avalibale_ip()
