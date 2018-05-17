@@ -2,6 +2,10 @@
 自动寻找可用代理并写入配置，一键去除黄易云音乐地区限制。  
 One-click to remove Netease CloudMusic area restrictions.
 ## Updates
+V3.0
+2018年5月17日
++ 加入本地配置读写，无需每次连接代理池
+
 V2.2
 2018年1月22日
 + 替换代理池，增强可用性
