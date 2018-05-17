@@ -7,11 +7,30 @@ import sys
 import time
 
 
-def get_latest_proxy():
-	url = 'https://proxy.horocn.com/api/free-proxy?format=json&loc_name=%E4%B8%AD%E5%9B%BD'
-	r = requests.get(url)
-	ip_ports = json.loads(r.text)
-	return ip_ports
+def download_latest_proxy():
+	try:
+		url = 'http://140.114.88.189:8000/?types=0&country=%E5%9B%BD%E5%86%85'
+		r = requests.get(url)
+		ip_ports = json.loads(r.text)
+		with open("./proxy.json","w") as f:
+			json.dump(ip_ports,f)
+		print('Downloading newest IP proxy pool...')
+		print("Download Success!")
+		return True
+	except:
+		print("****************************************")
+		print("Error:")
+		print("Download Fail.")
+		print("****************************************")
+		return False
+		
+def open_history_config():
+	try:
+		with open("./proxy.json",'r') as load_f:
+			ip_ports = json.load(load_f)
+		return ip_ports
+	except:
+		return False
 
 def check_location_cn(ip_add):
 	try:
@@ -28,16 +47,17 @@ def check_location_cn(ip_add):
 		return False
 
 def check_ip(ip,port):
+	set_time_out = 10
 	proxy_url = "http://"+ip+":"+str(port)
 	proxies = {
 	  "http": proxy_url
 	}
 	try:
 		try:
-			r = requests.get("http://ip.chinaz.com/getip.aspx", proxies=proxies,timeout=5)
+			r = requests.get("http://ip.chinaz.com/getip.aspx", proxies=proxies,timeout=set_time_out)
 			now_ip = re.search('\d+\.\d+\.\d+\.\d+',r.text).group(0)
 		except:
-			r = requests.get("http://checkip.dyndns.com/", proxies=proxies,timeout=5)
+			r = requests.get("http://checkip.dyndns.com/", proxies=proxies,timeout=set_time_out)
 			now_ip = re.search('\d+\.\d+\.\d+\.\d+',r.text).group(0)
 
 		if check_location_cn(now_ip):
@@ -67,7 +87,7 @@ def write_netease_config(ip,port):
 			f.write(pretty_data)
 	except:
 		print("****************************************")
-		print("Error 0:")
+		print("Error:")
 		print("Can not write config.")
 		print("****************************************")
 
@@ -77,25 +97,57 @@ def run_netease():
 		subprocess.Popen([run_path])
 	except:
 		print("****************************************")
-		print("Error 1:")
+		print("Error:")
 		print("Can not run NetEase Music.")
 		print("Please check location of this program.")
 		print("****************************************")
 
+def check_config_exist():
+	if os.path.exists("proxy.json"):
+		ip_ports = open_history_config()
+		if len(ip_ports) > 0:
+			print("Find history proxy config.")
+		else:
+			download_latest_proxy()
+			ip_ports = open_history_config()
+	else:
+		print("Can't find history proxy config.")
+		download_latest_proxy()
+		ip_ports = open_history_config()
+	return ip_ports
 
-def get_avalibale_ip():
-	ip_ports = get_latest_proxy()
-	print("Get "+str(len(ip_ports))+" proxies successfully!")
-	i = 0
-	for each in ip_ports:
-		i += 1
-		ip = each["host"]
-		port = each["port"]
-		print("Checking "+str(i)+" of "+str(len(ip_ports))+" proxies.Please Wait...")
+def check_avalibale_ip(ip_ports):
+	while (len(ip_ports) > 0):
+		ip = ip_ports[0][0]
+		port = ip_ports[0][1]
+		print("Checking "+str(len(ip_ports))+" proxies.Please Wait...")
 		if check_location_cn(ip) and check_ip(ip,port):
 			print("Find available proxy!")
 			break
-	return ip,port
+		else:
+			ip_ports.pop(0)
+			print("Fail!")
+	
+
+def get_avalibale_ip():
+	ip_ports = check_config_exist()
+	print("Get "+str(len(ip_ports))+" proxies.")
+	ip = ''
+	port = ''
+	redownload = False
+	check_avalibale_ip(ip_ports)
+	if len(ip_ports) == 0:
+		redownload = True
+		ip_ports = check_config_exist()
+		check_avalibale_ip(ip_ports)
+	with open("./proxy.json","w") as save_f:
+		json.dump(ip_ports,save_f)
+		print("Update config file...")
+	if redownload and len(ip_ports) == 0:
+		print('Unable to get proxy.Sorry.')
+		return '',''
+	else:
+		return ip,port
 
 if __name__ == '__main__':
 	print("___________                 .__              ")
@@ -111,10 +163,10 @@ if __name__ == '__main__':
 	print("     \______  /____/\____/|____/\____ | ")
 	print("            \/                       \/ ")
 	print("========================================")
-	print("          Forgive Cloud V2.2            ")
+	print("          Forgive Cloud V3.0            ")
 	print("          Powered by o8b.club           ")
 	print("========================================")
-	print("STEP 1/2 Getting newest IP proxy pool...")
+	print("STEP 1/2")
 	ip,port = get_avalibale_ip()
 	print("----------------------------------------")
 	print("STEP 2/2 Writing configuration files...")
